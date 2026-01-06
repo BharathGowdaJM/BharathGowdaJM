@@ -1,0 +1,230 @@
+50 QUESTIONS SQL :-
+
+
+SELECT FIRST_NAME AS "WORKER_NAME" FROM WORKER;    -- -> Q-1 from Organizzation datatset pdf
+
+select upper(FIRST_NAME) FROM WORKER;  -- -> Q-2
+
+select distinct(department) from worker;  -- -> Q-3
+
+select substring(FIRST_NAME,1,3) "first_name" from worker;  -- -> Q-4
+
+ALTER TABLE WORKER CHANGE FIRST_NAME WORKER_NAME varchar(30);
+ALTER TABLE WORKER CHANGE WORKER_NAME FIRST_NAME varchar(30);
+
+SELECT * FROM WORKER;
+ 
+SELECT position('A' in "Amitabh") from worker;
+
+update worker set first_name = upper(first_name);
+update worker set first_name = lower(first_name);
+
+SELECT FIRST_NAME, CONCAT(UPPER(SUBSTR(FIRST_NAME,1,1)),SUBSTR(FIRST_NAME,2)) AS "FIRST_NAME" FROM WORKER;
+
+UPDATE WORKER SET FIRST_NAME = CONCAT(UPPER(SUBSTR(FIRST_NAME,1,1)),SUBSTR(FIRST_NAME,2));
+
+select distinct(department) from worker;  -- -> Q-3
+
+select first_name, substr(FIRST_NAME,1,3) "sub_name" from worker;  -- -> Q-4
+
+select first_name, position('A' in first_name) as "Position of A" from Worker where first_name="Amitabh"; -- -> Q-5
+
+select length(rtrim("Bharath     "))as "length";
+select length(ltrim("    Bharath "));
+select length(trim("      Bharath     "));
+
+select department, ltrim(department) as Department from worker;  -- -> Q-7
+
+select distinct department, length(department) as len from worker;  -- -> Q-8
+
+select replace(lower(first_name),'a','K') as New_name from worker; -- -> Q-9
+
+select first_name, last_name, concat(first_name," ",last_name) as "COMPLETE_NAME" from WORKER; -- ->Q-10
+
+SELECT * FROM WORKER ORDER BY FIRST_NAME ASC;  -- -> Q-11
+
+SELECT * FROM WORKER ORDER BY FIRST_NAME ASC, DEPARTMENT DESC ; -- -> Q-12
+
+SELECT * FROM WORKER WHERE FIRST_NAME in ("Vipul","Satish");  -- -> Q-13
+
+SELECT * FROM WORKER WHERE FIRST_NAME NOT IN ("Vipul","Satish");  -- -> Q-14
+
+SELECT * FROM WORKER WHERE DEPARTMENT = "Admin"; -- -> Q-15
+
+SELECT * FROM WORKER WHERE FIRST_NAME like '%A%'; -- -> Q-16
+
+SELECT * FROM WORKER WHERE FIRST_NAME like '%A'; -- -> Q-17
+
+SELECT * FROM WORKER WHERE FIRST_NAME like '%H' AND length(FIRST_NAME)=6;   -- ->Q-18
+            -- OR
+SELECT * FROM WORKER WHERE FIRST_NAME like '_____H';    -- -> Q-18
+
+
+SELECT * FROM WORKER WHERE FIRST_NAME like 'V%L';     -- -> STARTS WITH V AND L
+
+SELECT * FROM WORKER WHERE SALARY between 100000 AND 500000 ; -- -> Q-19
+
+SELECT * FROM WORKER WHERE JOINING_DATE BETWEEN '2014-02-01' AND '2014-02-29';  -- OR
+SELECT * FROM WORKER WHERE year(JOINING_DATE) = 2014 AND MONTH(JOINING_DATE) = 2;  -- -> Q-20
+
+SELECT department, count(department) AS "Employee_Count" from worker where department = "Admin"; -- -> 21
+
+SELECT FIRST_NAME, LAST_NAME, SALARY FROM WORKER WHERE SALARY between 50000 AND 100000 AND DEPARTMENT = 'Admin'; -- -> Q-22
+
+SELECT DEPARTMENT, COUNT(WORKER_ID) AS "No of Workers" from Worker GROUP BY DEPARTMENT; -- -> Q-23
+
+SELECT * FROM WORKER ;
+
+# Write the query to print employeee details who work in Admin department and earning the salary > 100000
+select * from worker where department ='Admin' AND salary > 100000;
+
+# Total salary of Employee
+select department, sum(salary) as Total_Salary from worker
+where department IN ('Admin','HR')
+GROUP BY department
+HAVING SUM(SALARY) > 500000 ;
+
+
+# Write an SQL Query to print the no of employees working in each department
+select department, count(worker_id) as No_of_Workers from worker
+GROUP BY department
+HAVING count(worker_id) < 3;
+                #   <<<<<<<<<<< OR >>>>>>>>
+select department, count(*) as No_of_Workers from worker
+GROUP BY department
+#HAVING count(worker_id) < 3
+order by No_of_Workers desc;
+
+-- Q-24. Write An SQL Query To Print Details Of The Workers Who Are Also Managers.
+select * FROM worker inner join title on worker.worker_id = title.worker_ref_id
+where worker_title = 'Manager';
+                               -- <<<<<<< or >>>>>>>>
+select * FROM worker w join title t on w.worker_id = t.worker_ref_id
+where worker_title = 'Manager';
+                               -- <<<<<<< or >>>>>>>>
+alter table worker change worker_ref_id worker_id int;
+select * FROM worker w join title t using(worker_id)  -- -> When we have same column name
+where worker_title = 'Manager';
+
+# Q-25. Write An SQL Query To Fetch Duplicate Records Having Matching Data In Some Fields Of A Table
+select * from title;
+select * from worker;
+select worker_title, affected_from,count(*) as cnt from title
+where worker_title = 'Lead'
+group by worker_title, affected_from having cnt > 1;
+
+# Q-26. Write An SQL Query To Show Only Odd Rows From A Table
+select * from worker where mod(worker_id,2)!=0;
+
+# Q-27. Write An SQL Query To Show Only Odd Rows From A Table
+select * from worker where mod(worker_id,2)=0;
+
+# Q-28. Write An SQL Query To Clone A New Table From Another Table
+create table worker_new as (select * from worker);
+
+# Q-29. Write An SQL Query To Fetch Intersecting Records Of Two Tables
+select * from worker where worker_id in
+(select worker_ref_id from bonus);
+
+# Q-30. Write An SQL Query To Show Records From One Table That Another Table Does Not Have.
+select * from worker where worker_id not in
+(select worker_ref_id from bonus);
+
+# Q-31. Write An SQL Query To Show The Current Date And Time.
+select current_date(), current_time(), now();
+
+# Q-32. Write An SQL Query To Show The Top N (Say 10) Records Of A Table.
+select * from worker;
+select * from worker order by worker_id asc limit 6 offset 2;  -- -> with the usage of offset 
+
+select * from worker order by worker_id asc limit 6,2; -- -> without using the offset keyword, we can offset records.
+
+# Q-33. Write An SQL Query To Determine The Nth (Say N=5) Highest Salary From A Table.
+select * from worker order by salary desc limit 1;  -- Windows comes into play
+
+# Q-33. Write An SQL Query To Determine The Nth (Say N=5) Highest Salary From A Table.
+select * from (
+select * ,dense_rank() over(order by salary desc) as DNS_RNK
+from worker order by worker_id) as t where t.DNS_RNK = 5;
+
+# Q-34. Write An SQL Query To Determine The 5th Highest Salary Without Using TOP Or Limit Method.
+select * from (
+select * ,dense_rank() over(order by salary desc) as DNS_RNK
+from worker order by worker_id) as t where t.DNS_RNK = 5;
+
+#Q-35. Write An SQL Query To Fetch The List Of Employees With The Same Salary.
+select * from employee where Salary IN (
+select salary from employee group by salary
+having count(*) >1);
+
+
+#Q-36. Write An SQL Query To Show The Second Highest Salary From A Table.
+select * from (
+select * ,dense_rank() over(order by salary desc) as DNS_RNK
+from Employee order by emp_id) as t where t.DNS_RNK = 2;
+
+#Q-37. Write An SQL Query To Show One Row Twice In Results From A Table.  --> Using union all to duplicate records to get one row twice
+select * from worker
+union all 
+select * from worker order by worker_id;
+
+#Q-39. Write An SQL Query To Fetch The First 50% Records From A Table.
+select * from worker where worker_id <=
+(select round(count(*)/2) as First_50 from worker);
+
+#Q-40. Write An SQL Query To Fetch The Departments That Have Less Than Five People In It.
+select department,count(*) as cnt from worker
+group by department having cnt<5;
+
+#Q-41. Write An SQL Query To Show All Departments Along With The Number Of People In There.
+select department, count(*) as cnt from worker
+group by department;
+
+#Q-42. Write An SQL Query To Show The Last Record From A Table.
+select * from worker order by worker_id desc limit 1;
+
+#Q-43. Write An SQL Query To Fetch The First Row Of A Table.
+select * from worker order by worker_id asc limit 1;
+
+#Q-44. Write An SQL Query To Fetch The Last Five Records From A Table.
+select * from worker order by worker_id desc limit 5;
+
+#Q-45. Write An SQL Query To Print The Name Of Employees Having The Highest Salary In Each Department.
+SELECT dept, Emp_Name, Salary
+FROM (
+    SELECT dept, Emp_Name, Salary,
+           RANK() OVER (PARTITION BY dept ORDER BY Salary DESC) as SalaryRank
+    FROM Employee ORDER BY SalaryRank ASC
+) AS RankedEmployee
+WHERE SalaryRank = 1;
+
+select * from employee;
+
+#Q-46. Write An SQL Query To Fetch Three Max Salaries From A Table.
+select salary from employee limit 3;
+
+# Q-47. Write An SQL Query To Fetch Three Min Salaries From A Table.
+select salary, emp_name from employee order by salary asc limit 3;
+
+# Q-48. Write An SQL Query To Fetch Nth Max Salaries From A Table.(N=8)
+select * from (
+select * ,dense_rank() over(order by salary desc) as DNS_RNK
+from worker order by worker_id) as t where t.DNS_RNK = 5;
+
+# Q-49. Write An SQL Query To Fetch Departments Along With The Total Salaries Paid 
+select department, SUM(Salary) as Total_Salaries from worker group by department;
+
+# Q-50. Write An SQL Query To Fetch The Names Of Workers Who Earn The Highest Salary.
+SELECT first_name, salary
+FROM (
+    SELECT first_name, salary, 
+           rank() OVER (ORDER BY Salary DESC) as Salary_RNK
+    FROM Worker
+) AS Wrkrs_sal
+WHERE Salary_RNK = 1;
+
+#<<<<<<<<<<<<<<<<<or>>>>>>>>>>>>>>>>
+
+SELECT concat(first_name, ' ' ,last_name)as Name_of_Worker, Salary from worker
+where salary =(
+select MAX(SALARY) FROM WORKER);
