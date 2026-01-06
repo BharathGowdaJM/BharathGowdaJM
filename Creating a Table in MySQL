@@ -1,0 +1,38 @@
+#CREATE database Amazon;
+-- hgfcfxg
+/* Typesof Commands      -----> TYPES OF COMMENTS
+DDL 
+DML
+DCL DQL
+*/
+# 5+5
+-- select 5+6 AS AREA
+-- select 5+5 AS AREA
+
+create DATABASE Amazon;
+
+create DATABASE if not exists Amazon;
+
+drop DATABASE if exists Amazon;
+
+use Amazon;
+
+create table customers(
+Cust_Id int,
+Cust_Name varchar(18),
+Address varchar(50),
+Age int
+);
+
+
+create table orders(
+Order_Id int,
+Order_Date date,
+Quantity int
+);
+
+insert into customers values(1, "Krishna", 99, 24);
+insert into customers values(2, "Karna", "81Shrivatsa", 24),
+							(3, "Lava", "86Ramayana", 12),
+                            (4, "kusha", "81Pampe", 12),
+                            (5, "Bharatha", "81Varanasi", 24);
